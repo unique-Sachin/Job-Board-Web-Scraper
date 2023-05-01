@@ -3,7 +3,7 @@ const fs = require("fs");
 
 let browser;
 
-//* main scrape function to get all job information
+//* main scrape function to scrape all job information
 
 const scraper = async (query, number) => {
   browser = await puppeteer.launch({ headless: false });
@@ -25,17 +25,28 @@ const scraper = async (query, number) => {
   const jobListings = await page.$$eval(".cardOutline", (listings) => {
     return listings.map((listing) => {
       return {
+        //* scrape job title
         title: listing.querySelector(".css-1m4cuuf span").textContent.trim(),
+
+        //* scrape company name
         company: listing
           .querySelector(".heading6 .companyName")
           .textContent.trim(),
+
+        //* scrape company location
         location: listing
           .querySelector(".heading6 .companyLocation")
           .textContent.trim(),
+
+        //* scrape date of job posting
         datePosted: listing
           .querySelector(".heading6 .date ")
           .textContent.trim(),
+
+        //* scrape description of job posting
         snippet: listing.querySelector(".job-snippet li").textContent.trim(),
+
+        //* scrape url of job posting
         url: listing.querySelector(".jobTitle a.jcs-JobTitle").href,
       };
     });
@@ -44,7 +55,7 @@ const scraper = async (query, number) => {
   let data = [];
   let count = 0;
 
-  //* loop to get all job details according to provided number
+  //* loop to scrape all job details according to provided number if number is greater than available data, it will avoid infinite loop and create only available data
   while (data.length < number) {
     if (!jobListings[count]) {
       break;
@@ -54,7 +65,7 @@ const scraper = async (query, number) => {
     }
   }
 
-  //* getting all job details and creating new json file
+  //* scrapeting all job details and creating new json file
   fs.writeFile(`results.json`, JSON.stringify(data), (err) => {
     if (err) throw err;
     console.log("data scraped successfully");
