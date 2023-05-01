@@ -47,7 +47,7 @@ const scraper = async (query, number) => {
   //* loop to get all job details according to provided number
   while (data.length < number) {
     if (!jobListings[count]) {
-      count++;
+      break;
     } else {
       data.push(jobListings[count]);
       count++;
@@ -57,7 +57,7 @@ const scraper = async (query, number) => {
   //* getting all job details and creating new json file
   fs.writeFile(`results.json`, JSON.stringify(data), (err) => {
     if (err) throw err;
-    console.log("done");
+    console.log("data scraped successfully");
   });
   browser.close();
 };
